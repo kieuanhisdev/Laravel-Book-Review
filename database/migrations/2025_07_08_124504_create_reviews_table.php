@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('review');
             $table->unsignedTinyInteger('rating');
             $table->timestamps();
+            $table->foreignId('book_id')->constrained()->cascadeOnDelete();
         });
     }
 
