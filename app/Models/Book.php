@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Closure;
 use Illuminate\Contracts\Database\Query\Builder as QueryBuilder;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -49,4 +50,18 @@ class Book extends Model
             $query->whereBetween('created_at', [$from, $to]);
         }
     }
+
+    public function scopeWithRecentReviews(Builder $query, Closure $interval ) : Builder{
+        return $query->whereHas('reviews', function(Builder $q) use ($interval) {
+            $q->whereBetween('created_at', [$interval(now()), now()]);
+        }
+        );
+    }
+
+     public function scopeWithLastWeekReviews(Builder $query): Builder
+    {
+        return $query->withRecentReviews(fn($date) => $date->subWeek());
+    }
+
+
 }
